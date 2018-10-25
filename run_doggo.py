@@ -11,10 +11,11 @@ env.render()
 print(env.action_space.sample().shape)
 
 for i in range(int(tf/dt)):
-	action = np.ones_like(env.action_space.sample())
-	none = np.zeros_like(env.action_space.sample())
-
-	env.step(none)
+	# action = np.ones_like(env.action_space.sample())
+	# none = np.zeros_like(env.action_space.sample())
+	action = env.action_space.sample()
+	print(action)
+	env.step(action)
 	env.render()
 	time.sleep(0.002)
 
