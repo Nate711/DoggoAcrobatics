@@ -4,20 +4,40 @@ env = gym.make('HalfCheetah-v2')
 env.reset()
 import numpy as np
 
-tf = 10
-dt = 0.01
+tf = 4
+dt = 0.001
 env.render()
-# input("Press Enter to stop...")
-print(env.action_space.sample().shape)
 
-for i in range(int(tf/dt)):
-	# action = np.ones_like(env.action_space.sample())
-	# none = np.zeros_like(env.action_space.sample())
-	action = env.action_space.sample()
-	print(action)
-	env.step(action)
+# Actions are 4-vectors: one scalar for each joint torque
+N = int(tf/dt)
+height = np.zeros((2,N))
+
+for i in range(N):
+	
+	# no_action = np.zeros((4,))
+	# env.step(no_action)
+
+	# jump = np.array([-2,2,-2,2])
+	# env.step(jump)
+
+	random_action = env.action_space.sample()
+	# env.step(random_action)
+	# print(random_action)
+
+	if i*dt < 1.5:
+		action = np.array([0.05, 0 , 0.05, 0])
+	else:
+		action = np.array([-0.11, 0, -0.11, 0])
+	observation, reward, done, info = env.step(action)
+	height[:,i] = observation[0:2]
+
 	env.render()
-	time.sleep(0.002)
+print(height[0,:])
+origin_y = 0.5
+max_height = max(height[0,:]) + origin_y
 
-	# print('fuck you Nathan let\'s use git')
-	# print('you;ll thank me later mofo')
+print('Max height: {}'.format(max_height))
+	# time.sleep(0.01)
+
+	# input("Press Enter")
+	# break
