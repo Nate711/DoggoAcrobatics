@@ -4,7 +4,7 @@ env = gym.make('HalfCheetah-v2')
 env.reset()
 import numpy as np
 
-tf = 4
+tf = 8
 dt = 0.001
 env.render()
 
@@ -24,10 +24,12 @@ for i in range(N):
 	# env.step(random_action)
 	# print(random_action)
 
-	if i*dt < 1.5:
+	if i*dt < 3:
 		action = np.array([0.05, 0 , 0.05, 0])
+	elif i*dt < 5.5:
+		action = np.array([-0.11, 0, -0.01, 0])
 	else:
-		action = np.array([-0.11, 0, -0.11, 0])
+		action = np.array([0.00, 0, 0.00, 0])
 	observation, reward, done, info = env.step(action)
 	height[:,i] = observation[0:2]
 
