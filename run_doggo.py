@@ -1,11 +1,17 @@
 import gym
 import time
-env = gym.make('HalfCheetah-v2')
-env.reset()
 import numpy as np
 
-tf = 4
-dt = 0.001
+
+# Call the parser before simulation to make sure the xml is up to date!
+from subprocess import call
+call(["python3", "xml_parser.py"])
+
+env = gym.make('HalfCheetah-v2')
+env.reset()
+
+tf = 3
+dt = 0.0001
 env.render()
 
 # Actions are 4-vectors: one scalar for each joint torque
@@ -24,7 +30,7 @@ for i in range(N):
 	random_action = env.action_space.sample()
 	# env.step(random_action)
 	# print(random_action)
-	if i*dt > 2:
+	if i*dt > 1:
 
 		if pitch < 1.65:
 			action = np.array([-.04, 0 , 0.05, -pitch])

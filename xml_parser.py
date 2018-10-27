@@ -17,7 +17,7 @@ with open(in_file, 'r') as file :
 
 #### Replace variable names with values ####
 # Replace the target string
-filedata = filedata.replace('leg_radius', '0.001')
+filedata = filedata.replace('leg_radius', '0.005')
 
 
 
