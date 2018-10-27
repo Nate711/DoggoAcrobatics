@@ -5,14 +5,9 @@ Follow the OpenAI gym installation instructions. Make sure to also install Mujoc
 
 1. Modify xml_parser.py so that half_cheetah.xml is written to your ```gym/gym/envs/mujoco/assets``` folder.
 
-2. Run:
-```
-python3 xml_parser.py
-```
+2. Move half_cheetah.py to gym/gym/envs/mujoco
 
-3. Move half_cheetah.py to gym/gym/envs/mujoco
-
-4. Execute the following as a test:
+3. Execute the following to run the simulator:
 ```
 python3 run_doggo.py
 ```
