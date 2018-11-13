@@ -11,7 +11,7 @@ env = gym.make('HalfCheetah-v2')
 env.reset()
 
 tf = 3
-dt = 0.0001
+dt = 0.001
 env.render()
 
 # Actions are 4-vectors: one scalar for each joint torque
@@ -32,14 +32,15 @@ for i in range(N):
 	# print(random_action)
 	if i*dt > 1:
 
-		if pitch < 1.65:
+		if pitch < 1.8:
 			action = np.array([-.04, 0 , 0.05, -pitch])
 		elif pitch < 3.14:
-			action = np.array([-0.11, 0, -0.11, -pitch])
+			action = np.array([-0.05, 0, -0.07, -pitch])
 		else:
 			action = np.array([0.00, 0, 0, 0])
 	else:
 		action = np.array([0.05, 0 , 0.05, 0])
+
 	observation, reward, done, info = env.step(action)
 	height[:,i] = observation[0:2]
 
