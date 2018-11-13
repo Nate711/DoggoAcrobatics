@@ -17,8 +17,28 @@ class HalfCheetahEnv(mujoco_env.MujocoEnv, utils.EzPickle):
         self.do_simulation(action, self.frame_skip)
         xposafter = self.sim.data.qpos[0]
         ob = self._get_obs()
-        reward_ctrl = - 0.1 * np.square(action).sum()
+
+        # no such object qfrc....
+        # print(self.sim.data.qfrc_actuation)
+        # try qfrc_actuator
+        # print(self.sim.data.qfrc_actuator)
+
+
+        # This term was meant to minize actuator power, but I've since 
+        # changed how the actuators work. Instead of commanding force/torque,
+        # we are now giving the actuators position commands. This means
+        # we should no longer minimize the actuator commands.
+        # reward_ctrl = - 0.1 * np.square(action).sum()
+        reward_ctrl = - 0.001 * np.square(self.sim.data.qfrc_actuator).sum()
+
+        # TODO: make the reward control the square of the difference between the action and the joint angles!
+        # this would be an estimate of the torque output from the position actuators
+
+
         reward_run = (xposafter - xposbefore)/self.dt
+
+        # print(reward_ctrl,reward_run)
+
         reward = reward_ctrl + reward_run
         done = False
         return ob, reward, done, dict(reward_run=reward_run, reward_ctrl=reward_ctrl)

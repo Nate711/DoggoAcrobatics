@@ -46,7 +46,7 @@ for i in range(N):
 
 	pitch = (observation[1])
 
-	print(observation)
+	# print(observation)
 
 	env.render()
 
