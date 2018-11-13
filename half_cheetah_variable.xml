@@ -36,10 +36,10 @@
   <compiler angle="radian" coordinate="local" inertiafromgeom="true" settotalmass="2.4"/>
 
   <default>
-    <joint armature=".0001" damping="0" range = "-100 100" limited="true" solimplimit="0.999 0.999 0" solreflimit="doggo_solref 1" stiffness="0"/>
-    <geom conaffinity="0" condim="3" contype="1" friction=".8 .1 .1" rgba="0.8 0.6 .4 1" solimp="0.999 0.999 0" solref="doggo_solref 1"/>
+    <joint armature=".001" damping="0" range = "-100 100" limited="true" solimplimit="doggo_solimp1 doggo_solimp2 0" solreflimit="doggo_solref 1" stiffness="0"/>
+    <geom conaffinity="0" condim="3" contype="1" friction="doggo_friction .1 .1" rgba="0.8 0.6 .4 1" solimp="doggo_solimp1 doggo_solimp2 0" solref="doggo_solref 1"/>
     <position ctrllimited="true" forcelimited="true"/>
-    <equality solimp="0.999 0.999 0" solref = "doggo_solref 1"/>
+    <equality solimp="doggo_solimp1 doggo_solimp2 0" solref = "doggo_solref 1"/>
   </default>
 
 
@@ -66,12 +66,10 @@
       <joint armature="0" axis="1 0 0" damping="0" limited="false" name="rootx" pos="0 0 0" stiffness="0" type="slide"/>
       <joint armature="0" axis="0 0 1" damping="0" limited="false" name="rootz" pos="0 0 0" stiffness="0" type="slide"/>
       <joint armature="0" axis="0 1 0" damping="0" limited="false" name="rooty" pos="0 0 0" stiffness="0" type="hinge"/>
-      <!-- <joint armature="0" axis="0 1 0" damping="0" limited="false" name="rooty" pos="0 0 0" stiffness="0" type="free"/> -->
 
       <geom pos="0 0 0" name="torso" size="0.21 0.08 0.064" type="box"/>
-      <!-- <site name='tip'  pos='.15 0 .11'/>-->
       
-
+<!-- 
       <body name="bthigh" pos="-0.175 -0.1 0">
         <joint axis="0 1 0" name="bthigh" pos="0 0 0" type="hinge"/>
         <geom axisangle="0 1 0 1.57" name="bthigh" pos="-0.045 0 0"  type="capsule" size="leg_radius .045" rgba = "1 0 0 1"/>
@@ -110,20 +108,18 @@
           <joint axis="0 1 0" name="fshin2" pos="0 0 0" type="hinge"/>
           <geom axisangle="0 1 0 0.597" name="fshin2" pos="-0.045 0 -.066" rgba="0 1 1 1" size="leg_radius .08" type="capsule"/>
         </body>
-      </body>
-
-
+      </body> -->
 
 
       <body name="fradial" pos="0.175 -0.1 0">
         <joint axis="0 1 0" name="ftangential" pos="0 0 0" limited="true" range="-100 100" type="hinge" damping="0.5"/>
-        <joint axis="0 0 1" name="fradial" pos = "0 0 0" limited="true" range="-0.11 0.05" type = "slide" damping="50.0"/>
+        <joint armature="doggo_radial_armature" axis="0 0 1" name="fradial" pos = "0 0 0" limited="true" range="-0.11 0.05" type = "slide" damping="50.0"/>
         <geom axisangle="0 1 0 0" name="fradial" fromto="0 0 0.108 0 0 -0.132" size="0.01 0.12" type="capsule" rgba = "1 0 0 0.5"/>
       </body>
 
       <body name="bradial" pos="-0.175 -0.1 0">
         <joint axis="0 1 0" name="btangential" pos="0 0 0" limited="true" range="-100 100" type="hinge" damping="0.5"/>
-        <joint axis="0 0 1" name="bradial" pos = "0 0 0" limited="true" range="-0.11 0.05" type = "slide" damping="50.0"/>
+        <joint armature="doggo_radial_armature" axis="0 0 1" name="bradial" pos = "0 0 0" limited="true" range="-0.11 0.05" type = "slide" damping="50.0"/>
         <geom axisangle="0 1 0 0" name="bradial" fromto="0 0 0.108 0 0 -0.132" size="0.01 0.12" type="capsule" rgba = "1 0 0 0.5"/>
       </body>
 
@@ -131,7 +127,7 @@
     </body>
   </worldbody>
 
-
+<!-- 
   <equality>
     <connect name="bfoot" body1="bshin2" body2="bradial" anchor="-0.09 0 -0.1323"/>
     <connect name="ffoot" body1="fshin2" body2="fradial" anchor="-0.09 0 -0.1323"/>
@@ -139,7 +135,7 @@
     <connect name="bfoot2" body1="bshin" body2="bradial" anchor="0.09 0 -0.1323"/>
     <connect name="ffoot2" body1="fshin" body2="fradial" anchor="0.09 0 -0.1323"/>
   </equality>
-
+ -->
   <actuator>
     <!-- <position kp = "10" gear="1" joint="bthigh" name="bthigh"/>
     <position kp = "10" gear="1" joint="bthigh2" name="bthigh2"/> -->

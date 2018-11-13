@@ -6,8 +6,12 @@ from os.path import expanduser
 ###### ROBOT PARAMETERS #####
 
 leg_radius = 0.005
+doggo_friction = 1.5
 doggo_timestep = 0.001
 doggo_solref = doggo_timestep*2
+doggo_radial_armature = 0.1
+doggo_solimp1 = 0.999
+doggo_solimp2 = 0.999
 
 
 ###### GYM PARAMETERS #####
@@ -34,10 +38,10 @@ with open(in_file, 'r') as file :
 filedata = filedata.replace('leg_radius', str(leg_radius))
 filedata = filedata.replace('doggo_timestep', str(doggo_timestep))
 filedata = filedata.replace('doggo_solref', str(doggo_solref))
-
-
-
-
+filedata = filedata.replace('doggo_friction', str(doggo_friction))
+filedata = filedata.replace('doggo_radial_armature', str(doggo_radial_armature))
+filedata = filedata.replace('doggo_solimp1', str(doggo_solimp1))
+filedata = filedata.replace('doggo_solimp2', str(doggo_solimp2))
 
 
 

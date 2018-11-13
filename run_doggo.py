@@ -35,7 +35,7 @@ for i in range(N):
 		if pitch < 1.8:
 			action = np.array([-.04, 0 , 0.05, -pitch])
 		elif pitch < 3.14:
-			action = np.array([-0.05, 0, -0.07, -pitch])
+			action = np.array([-0.05, 0, -0.05, -pitch])
 		else:
 			action = np.array([0.00, 0, 0, 0])
 	else:
@@ -45,6 +45,8 @@ for i in range(N):
 	height[:,i] = observation[0:2]
 
 	pitch = (observation[1])
+
+	print(observation)
 
 	env.render()
 
