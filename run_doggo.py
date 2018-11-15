@@ -19,6 +19,10 @@ N = int(tf/dt)
 height = np.zeros((2,N))
 
 pitch = 0
+
+MAX_UP = 0.057
+MAX_DOWN = -0.112
+
 for i in range(N):
 	
 	# no_action = np.zeros((4,))
@@ -32,14 +36,14 @@ for i in range(N):
 	# print(random_action)
 	if i*dt > 1:
 
-		if pitch < 1.8:
-			action = np.array([-.04, 0 , 0.05, -pitch])
-		elif pitch < 3.14:
-			action = np.array([-0.05, 0, -0.05, -pitch])
+		if pitch < 1.7:
+			action = np.array([MAX_DOWN*1.0, 0 , MAX_UP, -pitch]) #100 means maximum
+		elif pitch < 2.2:
+			action = np.array([0, 0, MAX_DOWN, -pitch])
 		else:
-			action = np.array([0.00, 0, 0, 0])
+			action = np.array([0, 2*3.14-pitch, 0, 0])
 	else:
-		action = np.array([0.05, 0 , 0.05, 0])
+		action = np.array([0.08, 0 , 0.08, 0])
 
 	observation, reward, done, info = env.step(action)
 	height[:,i] = observation[0:2]
