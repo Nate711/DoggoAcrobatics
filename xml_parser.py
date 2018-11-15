@@ -1,5 +1,6 @@
 # Read in the file
 import os
+import shutil
 from os.path import expanduser
 
 
@@ -20,8 +21,8 @@ dir_path = os.path.dirname(os.path.realpath(__file__))
 in_file = dir_path+"/half_cheetah_variable.xml"
 
 home = expanduser("~")
-out_file = home+'/Documents/gym/gym/envs/mujoco/assets/half_cheetah.xml'
-
+mujoco_path = '/home/benja/anaconda3/envs/spinningup/lib/python3.6/site-packages/gym/envs/mujoco/'
+out_file = mujoco_path + 'assets/half_cheetah.xml'
 
 
 ### Parse the xml
@@ -48,3 +49,5 @@ filedata = filedata.replace('doggo_solimp2', str(doggo_solimp2))
 # Write the file out again
 with open(out_file, 'w') as file:
   file.write(filedata)
+
+shutil.copyfile('half_cheetah.py', mujoco_path + 'half_cheetah.py')
