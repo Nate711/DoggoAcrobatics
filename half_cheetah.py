@@ -7,17 +7,17 @@ from gym.envs.mujoco import mujoco_env
 
 class HalfCheetahEnv(mujoco_env.MujocoEnv, utils.EzPickle):
     def __init__(self):
-
+        self.paction = 0
         mujoco_env.MujocoEnv.__init__(self, 'half_cheetah.xml', 1)
         # mujoco_env.MujocoEnv.__init__(self, 'half_cheetah.xml', 5)
         utils.EzPickle.__init__(self)
 
     def step(self, action):
-        xposbefore = self.sim.data.qpos[0]
-        anglebefore = self.sim.data.qpos[2]
+        prev_pos = self.sim.data.qpos
+    
         self.do_simulation(action, self.frame_skip)
-        xposafter = self.sim.data.qpos[0]
-        angleafter = self.sim.data.qpos[2]
+
+        new_pos = self.sim.data.qpos
         ob = self._get_obs()
 
         # no such object qfrc....
@@ -25,25 +25,38 @@ class HalfCheetahEnv(mujoco_env.MujocoEnv, utils.EzPickle):
         # try qfrc_actuator
         # print(self.sim.data.qfrc_actuator)
 
-
+        reward = [] # Type: List[float]
         # This term was meant to minize actuator power, but I've since 
         # changed how the actuators work. Instead of commanding force/torque,
         # we are now giving the actuators position commands. This means
         # we should no longer minimize the actuator commands.
-        # reward_ctrl = - 0.1 * np.square(action).sum()
-        reward_ctrl = 0.001 * np.square(self.sim.data.qfrc_actuator).sum()
-        reward_spin = 100*(angleafter - anglebefore)/self.dt 
+
+        # Reward for smooth transitions
+        reward.append(- 500 * np.absolute(action - self.paction).sum())
+        #reward.append(np.square(self.sim.data.qfrc_actuator).sum())
+
+        # Reward for changing the angle (make it spin)
+        reward.append(1000*(new_pos[2] - prev_pos[2]))
         # TODO: make the reward control the square of the difference between the action and the joint angles!
         # this would be an estimate of the torque output from the position actuators
 
+        # Penalizes when the legs have different tang position
+        reward.append(-1 * abs(new_pos[3] - new_pos[5]))
 
-        reward_run = (xposafter - xposbefore)/self.dt
+        # X velocity, so it moves forward
+        reward.append(10*(new_pos[0] - prev_pos[0]))
+
+        # Penalize the robot for touching the floor 
+        reward.append(-(1 / new_pos[1])**2)
 
         # print(reward_ctrl,reward_run)
-
-        reward = reward_ctrl + reward_run + reward_spin 
         done = False
-        return ob, reward, done, dict(reward_run=reward_run, reward_ctrl=reward_ctrl)
+
+        self.paction = action
+        rewards = {}
+        for idx, val in enumerate(reward):
+            rewards[idx] = val
+        return ob, sum(reward), done, rewards
 
     def _get_obs(self):
         return np.concatenate([
