@@ -28,11 +28,11 @@ class HalfCheetahEnv(mujoco_env.MujocoEnv, utils.EzPickle):
 
         # Reward for smooth transitions
         # had 1 before
-        reward.append(- 0.0 * np.absolute(action - self.paction).sum()/self.dt) # -> becomes 5 is m/s is 1
+        reward.append(- (1e-5) * np.absolute(action - self.paction).sum()/self.dt) # -> becomes 5 is m/s is 1
         #reward.append(np.square(self.sim.data.qfrc_actuator).sum())
 
         # Reward for changing the angle (make it spin)
-        reward.append(10.0*(new_pos[2] - prev_pos[2])/self.dt) # -> becomes 10 if rad/s is 1
+        reward.append(1.0*(new_pos[2] - prev_pos[2])/self.dt) # -> becomes 10 if rad/s is 1
 
         # Penalizes when the legs have different tang position
         # reward.append(-1 * abs(new_pos[3] - new_pos[5]))
