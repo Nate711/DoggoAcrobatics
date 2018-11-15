@@ -21,7 +21,8 @@ dir_path = os.path.dirname(os.path.realpath(__file__))
 in_file = dir_path+"/half_cheetah_variable.xml"
 
 home = expanduser("~")
-mujoco_path = '/home/benja/anaconda3/envs/spinningup/lib/python3.6/site-packages/gym/envs/mujoco/'
+envs_path = home + '/Documents/gym/gym/envs/'
+mujoco_path = envs_path + 'mujoco/'
 out_file = mujoco_path + 'assets/half_cheetah.xml'
 
 
@@ -51,3 +52,4 @@ with open(out_file, 'w') as file:
   file.write(filedata)
 
 shutil.copyfile('half_cheetah.py', mujoco_path + 'half_cheetah.py')
+shutil.copyfile('__init__.py', envs_path + '__init__.py')
