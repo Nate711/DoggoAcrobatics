@@ -13,43 +13,36 @@ class HalfCheetahEnv(mujoco_env.MujocoEnv, utils.EzPickle):
         utils.EzPickle.__init__(self)
 
     def step(self, action):
-        prev_pos = self.sim.data.qpos
+        prev_pos = (self.sim.data.qpos).copy()
     
         self.do_simulation(action, self.frame_skip)
 
-        new_pos = self.sim.data.qpos
+        new_pos = (self.sim.data.qpos).copy()
+
+        # print(np.absolute(new_pos - prev_pos).sum())
+
         ob = self._get_obs()
 
-        # no such object qfrc....
-        # print(self.sim.data.qfrc_actuation)
-        # try qfrc_actuator
-        # print(self.sim.data.qfrc_actuator)
-
         reward = [] # Type: List[float]
-        # This term was meant to minize actuator power, but I've since 
-        # changed how the actuators work. Instead of commanding force/torque,
-        # we are now giving the actuators position commands. This means
-        # we should no longer minimize the actuator commands.
+        
 
         # Reward for smooth transitions
-        reward.append(- 500 * np.absolute(action - self.paction).sum())
+        # had 1 before
+        reward.append(- 0.0 * np.absolute(action - self.paction).sum()/self.dt) # -> becomes 5 is m/s is 1
         #reward.append(np.square(self.sim.data.qfrc_actuator).sum())
 
         # Reward for changing the angle (make it spin)
-        reward.append(1000*(new_pos[2] - prev_pos[2]))
-        # TODO: make the reward control the square of the difference between the action and the joint angles!
-        # this would be an estimate of the torque output from the position actuators
+        reward.append(10.0*(new_pos[2] - prev_pos[2])/self.dt) # -> becomes 10 if rad/s is 1
 
         # Penalizes when the legs have different tang position
-        reward.append(-1 * abs(new_pos[3] - new_pos[5]))
+        # reward.append(-1 * abs(new_pos[3] - new_pos[5]))
 
         # X velocity, so it moves forward
-        reward.append(10*(new_pos[0] - prev_pos[0]))
+        reward.append(0.0*(new_pos[0] - prev_pos[0])/self.dt) # -> becomes 0.1 if m/s is 1
 
         # Penalize the robot for touching the floor 
-        reward.append(-(1 / new_pos[1])**2)
+        # reward.append(-(1 / new_pos[1])**2)
 
-        # print(reward_ctrl,reward_run)
         done = False
 
         self.paction = action
@@ -60,13 +53,18 @@ class HalfCheetahEnv(mujoco_env.MujocoEnv, utils.EzPickle):
 
     def _get_obs(self):
         return np.concatenate([
-            self.sim.data.qpos.flat[1:],
-            self.sim.data.qvel.flat,
+            self.sim.data.qpos.flat[1:3],
+            self.sim.data.qvel.flat[0:3],
         ])
+        # return np.concatenate([
+        #     self.sim.data.qpos.flat[1:],
+        #     self.sim.data.qvel.flat,
+        # ])
 
     def reset_model(self):
         qpos = self.init_qpos + self.np_random.uniform(low=-.1, high=.1, size=self.model.nq)
         qvel = self.init_qvel + self.np_random.randn(self.model.nv) * .1
+        self.paction = 0
         self.set_state(qpos, qvel)
         return self._get_obs()
 
