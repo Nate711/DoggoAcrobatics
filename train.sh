@@ -1,1 +1,1 @@
-python xml_parser.py ; python -m spinup.run ppo --hid "[32,32]" --env HalfCheetah-v2 --exp_name train_doggo --gamma 0.99 --max_ep_len 4000 --steps_per_epoch 8000 --epochs 100
+python xml_parser.py ; python -m spinup.run ppo --hid "[32,32]" --env HalfCheetah-v2 --exp_name train_doggo --gamma 0.95 --max_ep_len 4000 --steps_per_epoch 12000 --epochs 100
