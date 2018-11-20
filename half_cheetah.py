@@ -32,12 +32,12 @@ class HalfCheetahEnv(mujoco_env.MujocoEnv, utils.EzPickle):
         # we should no longer minimize the actuator commands.
 
         # Reward for smooth transitions
-        if self.paction is not None:
-            reward.append(- 0.87 * np.absolute((action - self.paction) / self.dt).sum())
+        #if self.paction is not None:
+        #    reward.append(- 0.87 * np.absolute((action - self.paction) / self.dt).sum())
         #reward.append(np.square(self.sim.data.qfrc_actuator).sum())
 
         # Reward for changing the angle (make it spin)
-        reward.append(17000*(new_pos[2] - prev_pos[2])/self.dt)
+        #reward.append(17000*(new_pos[2] - prev_pos[2])/self.dt)
         # TODO: make the reward control the square of the difference between the action and the joint angles!
         # this would be an estimate of the torque output from the position actuators
 
@@ -50,7 +50,7 @@ class HalfCheetahEnv(mujoco_env.MujocoEnv, utils.EzPickle):
 
         # Penalize the robot for touching the floor 
         # reward.append(-1*(1 / new_pos[1])**2)
-        reward.append(70000*new_pos[1])
+        #reward.append(70000*new_pos[1])
         #print(*reward)
 
 
