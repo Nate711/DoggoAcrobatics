@@ -21,50 +21,56 @@ class HalfCheetahEnv(mujoco_env.MujocoEnv, utils.EzPickle):
 
         ob = self._get_obs()
 
-        reward = [] # Type: List[float]
-        
+        reward = {} # Type: List[float]
+
+        for i in range(self.sim.data.ncon):
+            contact = self.sim.data.contact[i]
+            c1 = self.sim.model.geom_id2name(contact.geom1)
+            c2 = self.sim.model.geom_id2name(contact.geom2)
+            # print('contact', i)
+            # print('dist', contact.dist)
+            # print('geom1', contact.geom1, self.sim.model.geom_id2name(contact.geom1))
+            # print('geom2', contact.geom2, self.sim.model.geom_id2name(contact.geom2))
+            if c2 == 'torso':
+                reward[str(i) + '_torso_contact'] = -100
+
+        # TODO: This doesn't really work. With weight 100 angular velocity makes everything awful
+        #       with weight 10 it's being 'ignored' which means it's slightly worse than weight 0
+        #       Maybe changing the weight to something in between could work.
+        #       Note that without angular velocity it's just doing shitty jumps to the side.
+        #       Maybe improving the shitty jumps first could be useful.
+
         # Reward for smooth transitions
-
-        if self.paction is not None:
-            reward.append(- 1e-5 * np.absolute((action - self.paction) / self.dt).sum())
-        #reward.append(np.square(self.sim.data.qfrc_actuator).sum())
-
+        # had 1 before
+        reward['smooth_transition'] = - (1e-5) * np.absolute(action - self.paction).sum()/self.dt
+        # reward.append(np.square(self.sim.data.qfrc_actuator).sum())
+        
         # Reward for changing the angle (make it spin)
-        reward.append(1.0*(new_pos[2] - prev_pos[2])/self.dt)
-        # TODO: make the reward control the square of the difference between the action and the joint angles!
-        # this would be an estimate of the torque output from the position actuators
-
-        # Penalizes when the legs have different tang position
-        # reward.append(-1 * abs(new_pos[3] - new_pos[5]))
-        # reward.append(abs(new_pos[3] - new_pos[5]))
+        reward['angular velocity'] = 10*(new_pos[2] - prev_pos[2])/self.dt
 
         # X velocity, so it moves forward
-        reward.append(0.1*(new_pos[0] - prev_pos[0])/self.dt)
+        reward['x velocity'] = 85*(new_pos[0] - prev_pos[0])/self.dt 
 
         # Penalize the robot for touching the floor 
-        # reward.append(-1*(1 / new_pos[1])**2)
-        reward.append(4.0*new_pos[1])
-        #print(*reward)
-
-
-
-        #if new_pos[3] > new_pos[5]:
-        #    reward.append((self.sim.data.qfrc_actuator[3] - self.sim.data.qfrc_actuator[1])*10)
-        #if new_pos[5] > new_pos[3]:
-        #    reward.append((self.sim.data.qfrc_actuator[1] - self.sim.data.qfrc_actuator[3])*10)
+        reward['y position'] = 3.7*(new_pos[1] + 10)
+        reward['y velocity'] = abs(50*(new_pos[1] - prev_pos[1])/self.dt)
 
         done = False
 
+        def print_values():
+            print('\n\nNEW')
+            for idx, val in reward.items():
+                print('{}: {}'.format(idx, val))
+
+        # print_values()
+
         self.paction = action
-        rewards = {}
-        for idx, val in enumerate(reward):
-            rewards[idx] = val
-        return ob, sum(reward), done, rewards
+        return ob, sum(reward.values()), done, reward
 
     def _get_obs(self):
         return np.concatenate([
-            self.sim.data.qpos.flat[1:3],
-            self.sim.data.qvel.flat[0:3],
+            self.sim.data.qpos.flat,
+            self.sim.data.qvel.flat,
         ])
         # return np.concatenate([
         #     self.sim.data.qpos.flat[1:],
