@@ -11,7 +11,7 @@ env = gym.make('HalfCheetah-v2')
 env.reset()
 
 tf = 3
-dt = 0.001
+dt = 0.005 # 0.001
 env.render()
 
 # Actions are 4-vectors: one scalar for each joint torque
