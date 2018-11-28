@@ -28,7 +28,8 @@ class HalfCheetahEnv(mujoco_env.MujocoEnv, utils.EzPickle):
 
         # Reward for smooth transitions
         # had 1 before
-        reward.append(- (1e-5) * np.absolute(action - self.paction).sum()/self.dt) # -> becomes 5 is m/s is 1
+        # 1e-4 worked
+        reward.append(- (1e-3) * np.absolute(action - self.paction).sum()/self.dt) # -> becomes 5 is m/s is 1
         #reward.append(np.square(self.sim.data.qfrc_actuator).sum())
 
         # Reward for changing the angle (make it spin)
@@ -52,14 +53,14 @@ class HalfCheetahEnv(mujoco_env.MujocoEnv, utils.EzPickle):
         return ob, sum(reward), done, rewards
 
     def _get_obs(self):
-        return np.concatenate([
-            self.sim.data.qpos.flat[1:3],
-            self.sim.data.qvel.flat[0:3],
-        ])
         # return np.concatenate([
-        #     self.sim.data.qpos.flat[1:],
-        #     self.sim.data.qvel.flat,
+        #     self.sim.data.qpos.flat[1:3],
+        #     self.sim.data.qvel.flat[0:3],
         # ])
+        return np.concatenate([
+            self.sim.data.qpos.flat[1:],
+            self.sim.data.qvel.flat,
+        ])
 
     def reset_model(self):
         qpos = self.init_qpos + self.np_random.uniform(low=-.1, high=.1, size=self.model.nq)
