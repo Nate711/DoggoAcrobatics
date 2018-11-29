@@ -11,7 +11,7 @@ env = gym.make('HalfCheetah-v2')
 env.reset()
 
 tf = 3
-dt = 0.001
+dt = 0.005
 env.render()
 
 # Actions are 4-vectors: one scalar for each joint torque
@@ -40,7 +40,7 @@ for i in range(N):
 			action = np.array([MAX_DOWN*1.0, 0 , MAX_UP, -pitch]) #100 means maximum
 		elif pitch < 2.2:
 			action = np.array([0, 0, MAX_DOWN, -pitch])
-		else:
+		else:	
 			action = np.array([0, 2*3.14-pitch, 0, 0])
 	else:
 		action = np.array([0.08, 0 , 0.08, 0])
