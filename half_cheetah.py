@@ -20,24 +20,25 @@ class HalfCheetahEnv(mujoco_env.MujocoEnv, utils.EzPickle):
         ob = self._get_obs()
 
         reward = [] # Type: List[float]
-        
 
-        # Reward for smooth transitions
-        # had 1 before
-        # equal weight: 1e-4, 1e-3 and 1e-2 all worked
-        smoothing_weight = np.array([1e-1, 1e-4, 1e-1, 1e-4])
+        for i in range(self.sim.data.ncon):
+            contact = self.sim.data.contact[i]
+            c1 = self.sim.model.geom_id2name(contact.geom1)
+            c2 = self.sim.model.geom_id2name(contact.geom2)
+            # print('contact', i)
+            # print('dist', contact.dist)
+            # print('geom1', contact.geom1, self.sim.model.geom_id2name(contact.geom1))
+            # print('geom2', contact.geom2, self.sim.model.geom_id2name(contact.geom2))
+            if c2 == 'torso':
+                reward.append(-100)
 
-        reward.append(- np.dot( np.absolute(action - self.paction), 
-                                smoothing_weight 
-                            ).sum()/self.dt)
-
-        #reward.append(np.square(self.sim.data.qfrc_actuator).sum())
+        reward.append( - 1e-6 * np.dot(action,action) / self.dt)
 
         # Reward for changing the angle (make it spin)
-        reward.append(0.0*(new_pos[2] - prev_pos[2])/self.dt)
+        reward.append(0.0 * (new_pos[2] - prev_pos[2])/self.dt)
 
         # X velocity, so it moves forward
-        reward.append(10.0*(new_pos[0] - prev_pos[0])/self.dt) 
+        reward.append(10.0 * (new_pos[0] - prev_pos[0])/self.dt) 
 
         done = False
 

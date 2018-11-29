@@ -25,7 +25,7 @@
   <default>
     <joint armature=".001" damping="0" range = "-100 100" limited="true" solimplimit="doggo_solimp1 doggo_solimp2 0" solreflimit="doggo_solref 1" stiffness="0"/>
     <geom conaffinity="0" condim="3" contype="1" friction="doggo_friction .1 .1" rgba="0.8 0.6 .4 1" solimp="doggo_solimp1 doggo_solimp2 0" solref="doggo_solref 1"/>
-    <position ctrllimited="true" forcelimited="true"/>
+    <motor ctrllimited="true" forcelimited="true"/>
     <equality solimp="doggo_solimp1 doggo_solimp2 0" solref = "doggo_solref 1"/>
   </default>
 
@@ -48,7 +48,7 @@
     <geom conaffinity="1" condim="3" material="MatPlane" name="floor" pos="0 0 0" rgba="0.8 0.9 0.8 1" size="40 40 40" type="plane"/>
     
 
-    <body name="torso" pos="0 0 0.3">
+    <body name="torso" pos="0 0 0.2">
       <camera name="track" mode="trackcom" pos="0 -2 0.3" xyaxes="1 0 0 0 0 1"/>
       <joint armature="0" axis="1 0 0" damping="0" limited="false" name="rootx" pos="0 0 0" stiffness="0" type="slide"/>
       <joint armature="0" axis="0 0 1" damping="0" limited="false" name="rootz" pos="0 0 0" stiffness="0" type="slide"/>
@@ -99,14 +99,14 @@
 
 
       <body name="fradial" pos="0.175 -0.1 0">
-        <joint axis="0 1 0" name="ftangential" pos="0 0 0" limited="true" range="-100 100" type="hinge" damping="0.5"/>
-        <joint armature="doggo_radial_armature" axis="0 0 1" name="fradial" pos = "0 0 0" limited="true" range="-0.112 0.057" type = "slide" damping="50.0"/>
+        <joint axis="0 1 0" name="ftangential" pos="0 0 0" limited="true" range="-100 100" type="hinge" damping="0.2"/>
+        <joint armature="doggo_radial_armature" axis="0 0 1" name="fradial" pos = "0 0 0" limited="true" range="-0.112 0.057" type = "slide" damping="1.0"/>
         <geom axisangle="0 1 0 0" name="fradial" fromto="0 0 0.108 0 0 -0.132" size="0.01 0.12" type="capsule" rgba = "1 0 0 0.5"/>
       </body>
 
       <body name="bradial" pos="-0.175 -0.1 0">
-        <joint axis="0 1 0" name="btangential" pos="0 0 0" limited="true" range="-100 100" type="hinge" damping="0.5"/>
-        <joint armature="doggo_radial_armature" axis="0 0 1" name="bradial" pos = "0 0 0" limited="true" range="-0.112 0.057" type = "slide" damping="50.0"/>
+        <joint axis="0 1 0" name="btangential" pos="0 0 0" limited="true" range="-100 100" type="hinge" damping="0.2"/>
+        <joint armature="doggo_radial_armature" axis="0 0 1" name="bradial" pos = "0 0 0" limited="true" range="-0.112 0.057" type = "slide" damping="1.0"/>
         <geom axisangle="0 1 0 0" name="bradial" fromto="0 0 0.108 0 0 -0.132" size="0.01 0.12" type="capsule" rgba = "1 0 0 0.5"/>
       </body>
 
@@ -124,11 +124,9 @@
   </equality> -->
 
   <actuator>
-    <!-- <position kp = "10" gear="1" joint="bthigh" name="bthigh"/>
-    <position kp = "10" gear="1" joint="bthigh2" name="bthigh2"/> -->
-    <position kp = "2000" gear="1" joint="bradial" name="bradial" forcerange="-200 200" ctrlrange="-0.112 0.057"/>
-    <position kp = "100" gear="1" joint="btangential" name="btangential" forcerange="-5 5" ctrlrange="-10 10"/>
-    <position kp = "2000" gear="1" joint="fradial" name="fradial" forcerange="-200 200" ctrlrange="-0.112 0.057"/>
-    <position kp = "100" gear="1" joint="ftangential" name="ftangential" forcerange="-5 5" ctrlrange="-10 10"/>
+    <motor gear="1" joint="bradial" name="bradial" forcerange="-200 200" ctrlrange="-200 200"/>
+    <motor gear="1" joint="btangential" name="btangential" forcerange="-5 5" ctrlrange="-5 5"/>
+    <motor gear="1" joint="fradial" name="fradial" forcerange="-200 200" ctrlrange="-200 200"/>
+    <motor gear="1" joint="ftangential" name="ftangential" forcerange="-5 5" ctrlrange="-5 5"/>
   </actuator>
 </mujoco>
