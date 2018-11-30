@@ -13,3 +13,4 @@ python3 run_doggo.py
 ```
 bash train.sh
 ```
+4. Use ```python -m spinup.run plot Working_results/train_doggo4_s0/``` to plot and ```python -m spinup.run test_policy Working_results/train_doggo4_s0/``` to simulate.

@@ -38,12 +38,6 @@ class HalfCheetahEnv(mujoco_env.MujocoEnv, utils.EzPickle):
             if c2 == 'torso':
                 reward[str(i) + '_torso_contact'] = -531
 
-        # TODO: This doesn't really work. With weight 100 angular velocity makes everything awful
-        #       with weight 10 it's being 'ignored' which means it's slightly worse than weight 0
-        #       Maybe changing the weight to something in between could work.
-        #       Note that without angular velocity it's just doing shitty jumps to the side.
-        #       Maybe improving the shitty jumps first could be useful.
-
         # Penalize every time the leg change direction to avoid jerking 
         f_v = (new_pos[4] - prev_pos[4])/self.dt
         b_v = (new_pos[6] - prev_pos[6])/self.dt
@@ -97,10 +91,13 @@ class HalfCheetahEnv(mujoco_env.MujocoEnv, utils.EzPickle):
         return ob, sum(reward.values()), done, reward
 
     def _get_obs(self):
-        return np.concatenate([
+        r = self.sim.data.qpos[2] % 3.14
+        r = 1.0 if r < 3.14 else -1.0
+        arr = np.concatenate([
             self.sim.data.qpos.flat,
             self.sim.data.qvel.flat,
         ])
+        return np.append(arr, [r])
         # return np.concatenate([
         #     self.sim.data.qpos.flat[1:],
         #     self.sim.data.qvel.flat,
