@@ -35,10 +35,10 @@ class HalfCheetahEnv(mujoco_env.MujocoEnv, utils.EzPickle):
         reward.append( - 1e-6 * np.dot(action,action) / self.dt)
 
         # Reward for changing the angle (make it spin)
-        reward.append(0.0 * (new_pos[2] - prev_pos[2])/self.dt)
+        reward.append(1.0 * (new_pos[2] - prev_pos[2])/self.dt)
 
         # X velocity, so it moves forward
-        reward.append(10.0 * (new_pos[0] - prev_pos[0])/self.dt) 
+        # reward.append(10.0 * (new_pos[0] - prev_pos[0])/self.dt) 
 
         done = False
 
