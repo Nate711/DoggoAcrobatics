@@ -19,26 +19,29 @@ class HalfCheetahEnv(mujoco_env.MujocoEnv, utils.EzPickle):
 
         ob = self._get_obs()
 
-        reward = [] # Type: List[float]
+        reward = {} # Type: List[float]
 
         for i in range(self.sim.data.ncon):
             contact = self.sim.data.contact[i]
             c1 = self.sim.model.geom_id2name(contact.geom1)
             c2 = self.sim.model.geom_id2name(contact.geom2)
-            # print('contact', i)
-            # print('dist', contact.dist)
-            # print('geom1', contact.geom1, self.sim.model.geom_id2name(contact.geom1))
-            # print('geom2', contact.geom2, self.sim.model.geom_id2name(contact.geom2))
             if c2 == 'torso':
-                reward.append(-100)
+                reward['contact' + str(i)] = -100
 
-        reward.append( - 1e-6 * np.dot(action,action) / self.dt)
+        # Penalty for high torques
+        reward['torque penalty'] = ( - 1e-8 * np.square(action).sum() / self.dt)
 
         # Reward for changing the angle (make it spin)
-        reward.append(1.0 * (new_pos[2] - prev_pos[2])/self.dt)
+        reward['angular velocity '] = (1.0 * (new_pos[2] - prev_pos[2])/self.dt)
 
         # X velocity, so it moves forward
         # reward.append(10.0 * (new_pos[0] - prev_pos[0])/self.dt) 
+
+        def print_values():
+            print('\n\nNEW')
+            for idx, val in reward.items():
+                print('{}: {}'.format(idx, val))
+        # print_values()
 
         done = False
 
@@ -46,7 +49,8 @@ class HalfCheetahEnv(mujoco_env.MujocoEnv, utils.EzPickle):
         rewards = {}
         for idx, val in enumerate(reward):
             rewards[idx] = val
-        return ob, sum(reward), done, rewards
+
+        return ob, sum(reward.values()), done, rewards
 
     def _get_obs(self):
         # return np.concatenate([
