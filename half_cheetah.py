@@ -97,10 +97,13 @@ class HalfCheetahEnv(mujoco_env.MujocoEnv, utils.EzPickle):
         return ob, sum(reward.values()), done, reward
 
     def _get_obs(self):
-        return np.concatenate([
+        r = self.sim.data.qpos[2] % 3.14
+        r = 1.0 if r < 3.14 else -1.0
+        arr = np.concatenate([
             self.sim.data.qpos.flat,
             self.sim.data.qvel.flat,
         ])
+        return np.append(arr, [r])
         # return np.concatenate([
         #     self.sim.data.qpos.flat[1:],
         #     self.sim.data.qvel.flat,
