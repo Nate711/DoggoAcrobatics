@@ -36,7 +36,7 @@ class HalfCheetahEnv(mujoco_env.MujocoEnv, utils.EzPickle):
             # print('geom1', contact.geom1, self.sim.model.geom_id2name(contact.geom1))
             # print('geom2', contact.geom2, self.sim.model.geom_id2name(contact.geom2))
             if c2 == 'torso':
-                reward[str(i) + '_torso_contact'] = -531
+                reward[str(i) + '_torso_contact'] = -1242
 
         # Penalize every time the leg change direction to avoid jerking 
         f_v = (new_pos[4] - prev_pos[4])/self.dt
