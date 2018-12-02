@@ -59,20 +59,10 @@ class HalfCheetahEnv(mujoco_env.MujocoEnv, utils.EzPickle):
         # reward.append(np.square(self.sim.data.qfrc_actuator).sum())
         
         # Reward for changing the angle (make it spin)
-        reward['angular velocity'] = 35*(new_pos[2] - prev_pos[2])/self.dt
-        # if new_pos[2] < 0.1:
-        #     reward['angular position'] = 6500*new_pos[2]
-        # elif new_pos[2] < 1:
-        #     reward['angular position'] = 650*new_pos[2]      
-        # elif new_pos[2] < 10:
-        #     reward['angular position'] = 65*new_pos[2]
-        # elif new_pos[2] < 100:
-        #     reward['angular position'] = 6*new_pos[2]
-        # else:
-        #     reward['angular position'] = 0.6*new_pos[2]
+        reward['angular velocity'] = 65*(new_pos[2] - prev_pos[2])/self.dt
 
         # X velocity, so it moves forward
-        reward['x velocity'] = 85*(new_pos[0] - prev_pos[0])/self.dt 
+        reward['x velocity'] = 25*(new_pos[0] - prev_pos[0])/self.dt 
 
         # Penalize the robot for touching the floor 
         reward['y position'] = 7*(new_pos[1] + 10)
