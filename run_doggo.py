@@ -36,7 +36,7 @@ for i in range(N):
 	# print(random_action)
 	if i*dt > 1:
 
-		if pitch < 1.7:
+		if pitch < 1.9:
 			action = np.array([MAX_DOWN*1.0, 0 , MAX_UP, -pitch]) #100 means maximum
 		elif pitch < 2.2:
 			action = np.array([0, 0, MAX_DOWN, -pitch])

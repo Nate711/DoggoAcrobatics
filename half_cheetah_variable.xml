@@ -101,13 +101,13 @@
       <body name="fradial" pos="0.175 -0.1 0">
         <joint axis="0 1 0" name="ftangential" pos="0 0 0" limited="true" range="-100 100" type="hinge" damping="0.5"/>
         <joint armature="doggo_radial_armature" axis="0 0 1" name="fradial" pos = "0 0 0" limited="true" range="-0.112 0.057" type = "slide" damping="50.0"/>
-        <geom axisangle="0 1 0 0" name="fradial" fromto="0 0 0.108 0 0 -0.132" size="0.01 0.12" type="capsule" rgba = "1 0 0 0.5"/>
+        <geom axisangle="0 1 0 0" name="fradial" fromto="0 0 0 0 0 -0.132" size="leg_radius" type="capsule" rgba = "1 0 0 0.5"/>
       </body>
 
       <body name="bradial" pos="-0.175 -0.1 0">
         <joint axis="0 1 0" name="btangential" pos="0 0 0" limited="true" range="-100 100" type="hinge" damping="0.5"/>
         <joint armature="doggo_radial_armature" axis="0 0 1" name="bradial" pos = "0 0 0" limited="true" range="-0.112 0.057" type = "slide" damping="50.0"/>
-        <geom axisangle="0 1 0 0" name="bradial" fromto="0 0 0.108 0 0 -0.132" size="0.01 0.12" type="capsule" rgba = "1 0 0 0.5"/>
+        <geom axisangle="0 1 0 0" name="bradial" fromto="0 0 0 0 0 -0.132" size="leg_radius" type="capsule" rgba = "1 0 0 0.5"/>
       </body>
 
   
@@ -126,9 +126,9 @@
   <actuator>
     <!-- <position kp = "10" gear="1" joint="bthigh" name="bthigh"/>
     <position kp = "10" gear="1" joint="bthigh2" name="bthigh2"/> -->
-    <position kp = "2000" gear="1" joint="bradial" name="bradial" forcerange="-200 200" ctrlrange="-0.112 0.057"/>
+    <position kp = "2000" gear="1" joint="bradial" name="bradial" forcerange="-max_linear_force max_linear_force" ctrlrange="-0.112 0.057"/>
     <position kp = "100" gear="1" joint="btangential" name="btangential" forcerange="-5 5" ctrlrange="-10 10"/>
-    <position kp = "2000" gear="1" joint="fradial" name="fradial" forcerange="-200 200" ctrlrange="-0.112 0.057"/>
+    <position kp = "2000" gear="1" joint="fradial" name="fradial" forcerange="-max_linear_force max_linear_force" ctrlrange="-0.112 0.057"/>
     <position kp = "100" gear="1" joint="ftangential" name="ftangential" forcerange="-5 5" ctrlrange="-10 10"/>
   </actuator>
 </mujoco>
