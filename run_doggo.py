@@ -48,7 +48,7 @@ for i in range(N):
 	observation, reward, done, info = env.step(action)
 	height[:,i] = observation[0:2]
 
-	pitch = (observation[1])
+	pitch = (observation[2])
 
 	# print(observation)
 
