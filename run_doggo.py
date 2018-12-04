@@ -23,34 +23,35 @@ pitch = 0
 MAX_UP = 0.057
 MAX_DOWN = -0.112
 
-for i in range(N):
-	
-	# no_action = np.zeros((4,))
-	# env.step(no_action)
+## qpos and action
+#index: [0      1       2       3       4       5       6]
+#qpos:  [x,     y,      pitch,  ftan,   frad,   btan,   brad]
+#act:   [ftan,  frad,   btan,   brad]
 
-	# jump = np.array([-2,2,-2,2])
-	# env.step(jump)
+## observation
+# pitch and joint pos + derivatives
+
+for i in range(N):
+
 
 	random_action = env.action_space.sample()
-	# env.step(random_action)
-	# print(random_action)
+
 	if i*dt > 1:
 
 		if pitch < 1.9:
-			action = np.array([MAX_DOWN*1.0, 0 , MAX_UP, -pitch]) #100 means maximum
+			action = np.array([-pitch, MAX_UP, 0, MAX_DOWN*1.0]) #100 means maximum
 		elif pitch < 2.2:
-			action = np.array([0, 0, MAX_DOWN, -pitch])
+			action = np.array([-pitch, MAX_DOWN, 0, 0])
 		else:
-			action = np.array([0, 2*3.14-pitch, 0, 0])
+			action = np.array([0, 0, 2*3.14-pitch, 0])
 	else:
-		action = np.array([0.08, 0 , 0.08, 0])
+		action = np.array([0 ,0.08, 0, 0.08])
 
 	observation, reward, done, info = env.step(action)
 	height[:,i] = observation[0:2]
 
-	pitch = (observation[2])
+	pitch = (observation[0])
 
-	# print(observation)
 
 	env.render()
 

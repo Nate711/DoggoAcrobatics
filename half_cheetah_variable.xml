@@ -126,9 +126,9 @@
   <actuator>
     <!-- <position kp = "10" gear="1" joint="bthigh" name="bthigh"/>
     <position kp = "10" gear="1" joint="bthigh2" name="bthigh2"/> -->
-    <position kp = "2000" gear="1" joint="bradial" name="bradial" forcerange="-max_linear_force max_linear_force" ctrlrange="-0.112 0.057"/>
-    <position kp = "100" gear="1" joint="btangential" name="btangential" forcerange="-5 5" ctrlrange="-6.28 6.28"/>
+    <position kp = "100" gear="1" joint="ftangential" name="ftangential" forcerange="-max_torque max_torque" ctrlrange="-6.28 6.28"/>
     <position kp = "2000" gear="1" joint="fradial" name="fradial" forcerange="-max_linear_force max_linear_force" ctrlrange="-0.112 0.057"/>
-    <position kp = "100" gear="1" joint="ftangential" name="ftangential" forcerange="-5 5" ctrlrange="-6.28 6.28"/>
+    <position kp = "100" gear="1" joint="btangential" name="btangential" forcerange="-max_torque max_torque" ctrlrange="-6.28 6.28"/>
+    <position kp = "2000" gear="1" joint="bradial" name="bradial" forcerange="-max_linear_force max_linear_force" ctrlrange="-0.112 0.057"/>
   </actuator>
 </mujoco>

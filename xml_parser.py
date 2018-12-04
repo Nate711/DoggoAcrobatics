@@ -14,6 +14,7 @@ doggo_radial_armature = 0.1
 doggo_solimp1 = 0.97 # 0.999
 doggo_solimp2 = 0.99 # 0.999
 max_linear_force = 250
+max_torque = 5
 
 
 ###### GYM PARAMETERS #####
@@ -46,6 +47,8 @@ filedata = filedata.replace('doggo_radial_armature', str(doggo_radial_armature))
 filedata = filedata.replace('doggo_solimp1', str(doggo_solimp1))
 filedata = filedata.replace('doggo_solimp2', str(doggo_solimp2))
 filedata = filedata.replace('max_linear_force', str(max_linear_force))
+filedata = filedata.replace('max_torque', str(max_torque))
+
 
 
 

@@ -17,23 +17,33 @@ class HalfCheetahEnv(mujoco_env.MujocoEnv, utils.EzPickle):
         utils.EzPickle.__init__(self)
 
     def step(self, action):
-        SMOOTHING = 0 #1e-2
-        ANG_VEL = 80
-        X_VEL = 20
-        YPOS = 0
-        JERKING = 0 # 100
-        GROUND = 100 # 1000
+        ANG_VEL = 1
+        X_VEL = 0
+        YPOS = 1
+        GROUND = 100
 
+        TORQUE_NORMALIZER = [1,0.02,1,0.02] # puts torque (-5 to 5) and linear force (-250 to 250) on the same magnitude
+        TORQUE_GAIN = 1e1 # multiplies both torque and normalized linear force
 
         prev_pos = (self.sim.data.qpos).copy()
-    
         self.do_simulation(action, self.frame_skip)
-
         new_pos = (self.sim.data.qpos).copy()
 
-        ob = self._get_obs()
+        full_state = (self.sim.data.qpos).copy()
 
+        ob = self._get_obs()
         reward = {} # Type: List[float]
+
+        ## Limit force
+        #index: [0      1       2       3       4       5       6]
+        #qpos:  [x,     y,      pitch,  ftan,   frad,   btan,   brad]
+        #act:   [ftan,  frad,   btan,   brad]
+
+        leg_positions = new_pos.take([3,4,5,6])
+        torque_estimate = (action - leg_positions)*TORQUE_NORMALIZER # element-wise multiplication
+        torque_estimate = np.square(torque_estimate).sum()
+
+        reward['torque minimizer'] =  - torque_estimate * TORQUE_GAIN
 
         for i in range(self.sim.data.ncon):
             contact = self.sim.data.contact[i]
@@ -42,33 +52,16 @@ class HalfCheetahEnv(mujoco_env.MujocoEnv, utils.EzPickle):
             
             if c2 == 'torso':
                 reward[str(i) + '_torso_contact'] = -GROUND
-
-        # Penalize every time the leg change direction to avoid jerking 
-        f_v = (new_pos[4] - prev_pos[4])/self.dt
-        b_v = (new_pos[6] - prev_pos[6])/self.dt
-        if (self.attr['prev_leg_v_f'] > 0 and f_v < 0) or (self.attr['prev_leg_v_f'] < 0 and f_v > 0):
-            reward['jerking_f'] = -JERKING
-            # self.attr['leg_cycle'] += 1
-        if (self.attr['prev_leg_v_b'] > 0 and b_v < 0) or (self.attr['prev_leg_v_b'] < 0 and b_v > 0):
-            reward['jerking_b'] = -JERKING
-            # self.attr['leg_cycle'] += 1
-        self.attr['prev_leg_v_b'] = b_v
-        self.attr['prev_leg_v_f'] = f_v
-        
-        # Reward for smooth transitions
-        reward['smooth_transition'] = - (SMOOTHING) * np.absolute(action - self.paction).sum()/self.dt
         
         # if reward['smooth_transition'] > 10:
         #     print('TOOOOO MCUUUUUCH')
         
         # Reward for changing the angle (make it spin)
-        reward['angular velocity'] = ANG_VEL*(new_pos[2] - prev_pos[2])/self.dt
-
-        # X velocity, so it moves forward
-        reward['x velocity'] = X_VEL*(new_pos[0] - prev_pos[0])/self.dt 
+        reward['angular velocity'] = ANG_VEL*(new_pos[0] - prev_pos[0])/self.dt
 
         # Penalize the robot for touching the floor 
-        reward['y position'] = YPOS*(new_pos[1])
+        reward['y position'] = YPOS*(full_state[1])
+        print
 
         done = False
 
@@ -83,18 +76,11 @@ class HalfCheetahEnv(mujoco_env.MujocoEnv, utils.EzPickle):
         return ob, sum(reward.values()), done, reward
 
     def _get_obs(self):
-        r = self.sim.data.qpos[2] % 3.14
-        r = 1.0 if r < 3.14 else -1.0
-        arr = np.concatenate([
-            self.sim.data.qpos.flat,
-            self.sim.data.qvel.flat,
+        # take [pitch, joint positions] + derivative wrt time of [pitch, joint positions]
+        return np.concatenate([
+            np.array(self.sim.data.qpos.flat).take([2,3,4,5,6]),
+            np.array(self.sim.data.qvel.flat).take([2,3,4,5,6])
         ])
-        return np.append(arr, [r])
-
-        # return np.concatenate([
-        #     self.sim.data.qpos.flat[1:],
-        #     self.sim.data.qvel.flat,
-        # ])
 
     def reset_model(self):
         self.paction = 0
