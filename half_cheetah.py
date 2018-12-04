@@ -29,6 +29,10 @@ class HalfCheetahEnv(mujoco_env.MujocoEnv, utils.EzPickle):
         self.do_simulation(action, self.frame_skip)
         new_pos = (self.sim.data.qpos).copy()
 
+        body_pitch_old = prev_pos[2]
+        body_pitch_new = new_pos[2]
+        body_y = new_pos[1]
+
         full_state = (self.sim.data.qpos).copy()
 
         ob = self._get_obs()
@@ -57,10 +61,10 @@ class HalfCheetahEnv(mujoco_env.MujocoEnv, utils.EzPickle):
         #     print('TOOOOO MCUUUUUCH')
         
         # Reward for changing the angle (make it spin)
-        reward['angular velocity'] = ANG_VEL*(new_pos[0] - prev_pos[0])/self.dt
+        reward['angular velocity'] = ANG_VEL * (body_pitch_new - body_pitch_old)/self.dt
 
         # Penalize the robot for touching the floor 
-        reward['y position'] = YPOS*(full_state[1])
+        reward['y position'] = YPOS * body_y
         print
 
         done = False
