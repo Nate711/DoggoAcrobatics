@@ -17,13 +17,13 @@ class HalfCheetahEnv(mujoco_env.MujocoEnv, utils.EzPickle):
         utils.EzPickle.__init__(self)
 
     def step(self, action):
-        ANG_VEL = 1
+        ANG_VEL = 0
         X_VEL = 0
         YPOS = 1
         GROUND = 100
 
         TORQUE_NORMALIZER = [1,0.02,1,0.02] # puts torque (-5 to 5) and linear force (-250 to 250) on the same magnitude
-        TORQUE_GAIN = 1e1 # multiplies both torque and normalized linear force
+        TORQUE_GAIN = 1e-1 # multiplies both torque and normalized linear force
 
         prev_pos = (self.sim.data.qpos).copy()
         self.do_simulation(action, self.frame_skip)
