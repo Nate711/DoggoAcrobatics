@@ -73,7 +73,7 @@ class HalfCheetahEnv(mujoco_env.MujocoEnv, utils.EzPickle):
             for idx, val in reward.items():
                 print('{}: {}'.format(idx, val))
 
-        print_values()
+        # print_values()
 
         self.paction = action
         return ob, sum(reward.values()), done, reward
