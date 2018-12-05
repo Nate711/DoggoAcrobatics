@@ -20,7 +20,7 @@ class HalfCheetahEnv(mujoco_env.MujocoEnv, utils.EzPickle):
         ANG_VEL = 0
         X_VEL = 0
         YPOS = 1
-        GROUND = 100
+        GROUND = 10
 
         TORQUE_NORMALIZER = [1,0.02,1,0.02] # puts torque (-5 to 5) and linear force (-250 to 250) on the same magnitude
         TORQUE_GAIN = 1e-1 # multiplies both torque and normalized linear force
@@ -55,7 +55,7 @@ class HalfCheetahEnv(mujoco_env.MujocoEnv, utils.EzPickle):
             c2 = self.sim.model.geom_id2name(contact.geom2)
             
             if c2 == 'torso':
-                reward[str(i) + '_torso_contact'] = -GROUND
+                reward[c1 + '_torso_contact'] = -GROUND
         
         # if reward['smooth_transition'] > 10:
         #     print('TOOOOO MCUUUUUCH')
@@ -65,7 +65,6 @@ class HalfCheetahEnv(mujoco_env.MujocoEnv, utils.EzPickle):
 
         # Penalize the robot for touching the floor 
         reward['y position'] = YPOS * body_y
-        print
 
         done = False
 
@@ -74,7 +73,7 @@ class HalfCheetahEnv(mujoco_env.MujocoEnv, utils.EzPickle):
             for idx, val in reward.items():
                 print('{}: {}'.format(idx, val))
 
-        # print_values()
+        print_values()
 
         self.paction = action
         return ob, sum(reward.values()), done, reward
