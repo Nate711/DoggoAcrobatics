@@ -18,7 +18,7 @@ class HalfCheetahEnv(mujoco_env.MujocoEnv, utils.EzPickle):
 
     def step(self, action):
         ANG_VEL = 0
-        YPOS = 1
+        YPOS = 100
         Y_THRESHOLD = 0.05 # [m]
         GROUND = 10
 
@@ -90,8 +90,8 @@ class HalfCheetahEnv(mujoco_env.MujocoEnv, utils.EzPickle):
                  on_ground = 1 
 
         return np.concatenate([
-            np.array(self.sim.data.qpos.flat).take([2,3,4,5,6]),
-            np.array(self.sim.data.qvel.flat).take([2,3,4,5,6]),
+            np.array(self.sim.data.qpos.flat).take([1,2,3,4,5,6]),
+            np.array(self.sim.data.qvel.flat).take([1,2,3,4,5,6]),
             np.array([on_ground])
         ])
 
