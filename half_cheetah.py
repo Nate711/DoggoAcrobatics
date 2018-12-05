@@ -18,9 +18,10 @@ class HalfCheetahEnv(mujoco_env.MujocoEnv, utils.EzPickle):
 
     def step(self, action):
         ANG_VEL = 0
-        X_VEL = 0
         YPOS = 1
+        Y_THRESHOLD = 0.3 # [m]
         GROUND = 10
+
 
         TORQUE_NORMALIZER = [1,0.02,1,0.02] # puts torque (-5 to 5) and linear force (-250 to 250) on the same magnitude
         TORQUE_GAIN = 1e-1 # multiplies both torque and normalized linear force
@@ -63,8 +64,8 @@ class HalfCheetahEnv(mujoco_env.MujocoEnv, utils.EzPickle):
         # Reward for changing the angle (make it spin)
         reward['angular velocity'] = ANG_VEL * (body_pitch_new - body_pitch_old)/self.dt
 
-        # Penalize the robot for touching the floor 
-        reward['y position'] = YPOS * body_y
+        # Reward the robot for being more thna y_threshold off the ground
+        reward['y position'] = YPOS * ((body_y - Y_THRESHOLD)**2) if body_y > Y_THRESHOLD else 0
 
         done = False
 
