@@ -19,7 +19,7 @@ class HalfCheetahEnv(mujoco_env.MujocoEnv, utils.EzPickle):
     def step(self, action):
         ANG_VEL = 0
         YPOS = 1
-        Y_THRESHOLD = 0.3 # [m]
+        Y_THRESHOLD = 0.05 # [m]
         GROUND = 10
 
 
@@ -57,7 +57,7 @@ class HalfCheetahEnv(mujoco_env.MujocoEnv, utils.EzPickle):
             
             if c2 == 'torso':
                 reward[c1 + '_torso_contact'] = -GROUND
-        
+	    
         # if reward['smooth_transition'] > 10:
         #     print('TOOOOO MCUUUUUCH')
         
@@ -81,9 +81,18 @@ class HalfCheetahEnv(mujoco_env.MujocoEnv, utils.EzPickle):
 
     def _get_obs(self):
         # take [pitch, joint positions] + derivative wrt time of [pitch, joint positions]
+        on_ground = 0
+        for i in range(self.sim.data.ncon):
+            contact = self.sim.data.contact[i]
+            c1 = self.sim.model.geom_id2name(contact.geom1)
+            c2 = self.sim.model.geom_id2name(contact.geom2)
+            if c2 == 'fradial' or c2 == 'bradial':
+                 on_ground = 1 
+
         return np.concatenate([
             np.array(self.sim.data.qpos.flat).take([2,3,4,5,6]),
-            np.array(self.sim.data.qvel.flat).take([2,3,4,5,6])
+            np.array(self.sim.data.qvel.flat).take([2,3,4,5,6]),
+            np.array([on_ground])
         ])
 
     def reset_model(self):
