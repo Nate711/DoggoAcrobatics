@@ -17,7 +17,7 @@ class HalfCheetahEnv(mujoco_env.MujocoEnv, utils.EzPickle):
         utils.EzPickle.__init__(self)
 
     def step(self, action):
-        ANG_VEL = 0
+        ANG_VEL = 0.1
         YPOS = 10
         Y_THRESHOLD = 0.1 # [m]
         GROUND = 10
