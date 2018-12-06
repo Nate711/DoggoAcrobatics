@@ -18,8 +18,8 @@ class HalfCheetahEnv(mujoco_env.MujocoEnv, utils.EzPickle):
 
     def step(self, action):
         ANG_VEL = 0
-        YPOS = 100
-        Y_THRESHOLD = 0.05 # [m]
+        YPOS = 10
+        Y_THRESHOLD = 0.1 # [m]
         GROUND = 10
 
 
@@ -101,8 +101,8 @@ class HalfCheetahEnv(mujoco_env.MujocoEnv, utils.EzPickle):
         self.attr['prev_leg_v_f'] = 0
         self.attr['prev_leg_v_b'] = 0
         # self.attr['leg_cycle'] = 0
-        qpos = self.init_qpos + self.np_random.uniform(low=-.1, high=.1, size=self.model.nq)
-        qvel = self.init_qvel + self.np_random.randn(self.model.nv) * .1
+        qpos = self.init_qpos + self.np_random.uniform(low=-.001, high=.001, size=self.model.nq)
+        qvel = self.init_qvel + self.np_random.randn(self.model.nv) * .001
         self.paction = 0
         self.set_state(qpos, qvel)
         return self._get_obs()
