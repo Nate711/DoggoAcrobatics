@@ -17,10 +17,10 @@ class HalfCheetahEnv(mujoco_env.MujocoEnv, utils.EzPickle):
         utils.EzPickle.__init__(self)
 
     def step(self, action):
-        ANG_VEL = 0.1
+        ANG_VEL = 1
         YPOS = 10
         Y_THRESHOLD = 0.1 # [m]
-        GROUND = 10
+        GROUND = 25
 
 
         TORQUE_NORMALIZER = [1,0.02,1,0.02] # puts torque (-5 to 5) and linear force (-250 to 250) on the same magnitude
