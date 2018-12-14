@@ -30,6 +30,7 @@ MAX_DOWN = -0.112
 
 ## observation
 # pitch and joint pos + derivatives
+total_reward = 0
 
 for i in range(N):
 
@@ -50,15 +51,18 @@ for i in range(N):
 	observation, reward, done, info = env.step(action)
 	height[:,i] = observation[0:2]
 
-	pitch = (observation[0])
-
+	pitch = (observation[1])
 
 	env.render()
+	
+
+	total_reward += reward
+	print(total_reward, info)
 
 	# time.sleep(0.0005)
 
 
-print(height[0,:])
+# print(height[0,:])
 origin_y = 0.5
 max_height = max(height[0,:]) + origin_y
 
