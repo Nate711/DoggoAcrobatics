@@ -1,15 +1,26 @@
 # DoggoAcrobatics
 
 ## Requirements
-Follow the OpenAI gym installation instructions. Make sure to also install Mujoco using a student license / 30 day trial license.
+0. Follow the OpenAI gym installation instructions for installing gym and mujoco-py. Make sure to copy your mujoco mjkey.txt file to the right location inside
+the mujocopy directory.
 
-1. Modify xml_parser.py so that envs_path is your ```gym/envs/``` folder.
+1. Modify UpdateGymFiles.py so that ENVS_PATH is correctly set to your ```gym/envs/``` folder.
 
-2. Execute the following to run the simulator:
+2. To test the simulator and have the robot do a backflip run:
+```console
+python3 Flip.py
 ```
-python3 run_doggo.py
-```
-3. Execut the following to train doggo:
-```
+3. Run this bash script to train doggo using the Spinning Up library
+```console
 bash train.sh
 ```
+4. Run
+```console
+python -m spinup.run plot Working_results/train_doggo4_s0/
+```
+to plot the training results.
+5. Run
+```console
+python -m spinup.run test_policy Working_results/train_doggo4_s0/
+```
+to simulate the trained policy.

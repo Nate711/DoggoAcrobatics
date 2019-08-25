@@ -1,2 +1,1 @@
-python xml_parser.py ; python -m spinup.run sac --hid "[128, 128]" --env HalfCheetah-v2 --exp_name doggo_backflip_ppo_8 --gamma 0.995 --max_ep_len 400 --steps_per_epoch 2000 --epochs 500 
-
+python3 PupperXMLParser.py ; python3 UpdateGymFiles.py ; python3 -m spinup.run ppo --hid "[512, 512, 512]" --env HalfCheetah-v2 --exp_name train_doggo5 --gamma 0.99 --max_ep_len 4000 --steps_per_epoch 8000 --epochs 5000 2>&1 | tee output.txt

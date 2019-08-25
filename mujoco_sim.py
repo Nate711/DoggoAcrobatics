@@ -3,4 +3,4 @@ model = mujoco_py.load_model_from_path("/Users/nathan/Documents/gym/gym/envs/muj
 sim = mujoco_py.MjSim(model)
 viewer = mujoco_py.MjViewer(sim)
 for i in range(5000):
-	viewer.render()
+    viewer.render()

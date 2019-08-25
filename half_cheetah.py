@@ -1,78 +1,66 @@
-#### PUT THIS FILE IN gym/gym/envs/mujoco/ !!! #######
-
+# This file must at some point be copied to the gym/gym/envs/mujoco/ directory
 
 import numpy as np
 from gym import utils
 from gym.envs.mujoco import mujoco_env
 
+
 class HalfCheetahEnv(mujoco_env.MujocoEnv, utils.EzPickle):
+    """
+    POMDP model for the Pupper robot
+    Modified from the HalfCheetah model to work with OpenAI Gym
+    """
+
     def __init__(self):
+        # previous action
         self.paction = 0
-        self.attr = {}
-        self.attr['prev_leg_v_f'] = 0
-        self.attr['prev_leg_v_b'] = 0
-        # self.attr['leg_cycle'] = 0
-        mujoco_env.MujocoEnv.__init__(self, 'half_cheetah.xml', 1)
+        mujoco_env.MujocoEnv.__init__(self, "half_cheetah.xml", 1)
         # mujoco_env.MujocoEnv.__init__(self, 'half_cheetah.xml', 5)
         utils.EzPickle.__init__(self)
 
     def step(self, action):
-        ANG_VEL = 1
-        YPOS = 10
-        Y_THRESHOLD = 0.1 # [m]
-        GROUND = 25
+        """
+        Execute the given action and then compute the resulting reward.
 
-
-        TORQUE_NORMALIZER = [1,0.02,1,0.02] # puts torque (-5 to 5) and linear force (-250 to 250) on the same magnitude
-        TORQUE_GAIN = 1e-1 # multiplies both torque and normalized linear force
-
-        prev_pos = (self.sim.data.qpos).copy()
+        :param action: The action to take.
+        """
         self.do_simulation(action, self.frame_skip)
         new_pos = (self.sim.data.qpos).copy()
-
-        body_pitch_old = prev_pos[2]
-        body_pitch_new = new_pos[2]
-        body_y = new_pos[1]
-
-        full_state = (self.sim.data.qpos).copy()
-
         ob = self._get_obs()
-        reward = {} # Type: List[float]
 
-        ## Limit force
-        #index: [0      1       2       3       4       5       6]
-        #qpos:  [x,     y,      pitch,  ftan,   frad,   btan,   brad]
-        #act:   [ftan,  frad,   btan,   brad]
+        # Extract the y-axis rate of the robot
+        pitch_rate = ob[23]
+        vel_x = ob[19]
 
-        leg_positions = new_pos.take([3,4,5,6])
-        torque_estimate = (action - leg_positions)*TORQUE_NORMALIZER # element-wise multiplication
-        torque_estimate = np.square(torque_estimate).sum()
-
-        reward['torque minimizer'] =  - torque_estimate * TORQUE_GAIN
+        reward = {}  # Type: List[float]
 
         for i in range(self.sim.data.ncon):
             contact = self.sim.data.contact[i]
             c1 = self.sim.model.geom_id2name(contact.geom1)
             c2 = self.sim.model.geom_id2name(contact.geom2)
-            
-            if c2 == 'torso':
-                reward[c1 + '_torso_contact'] = -GROUND
-	    
-        # if reward['smooth_transition'] > 10:
-        #     print('TOOOOO MCUUUUUCH')
-        
-        # Reward for changing the angle (make it spin)
-        reward['angular velocity'] = ANG_VEL * (body_pitch_new - body_pitch_old)/self.dt
+            if c2 == "torso":
+                reward[str(i) + "_torso_contact"] = -531
 
-        # Reward the robot for being more thna y_threshold off the ground
-        reward['y position'] = YPOS * ((body_y - Y_THRESHOLD)**2) if body_y > Y_THRESHOLD else 0
+        # Penalizes big changes in servo positions
+        reward["smooth_transition"] = (
+            -(1e-2) * np.absolute(action - self.paction).sum() / self.dt
+        )
+
+        # Reward for spinning
+        reward["angular velocity"] = 35 * pitch_rate
+
+        # Reward the x velocity, so that it moves forward
+        reward["x velocity"] = 85 * vel_x
+
+        # Penalize the robot for touching the floor
+        reward["y position"] = 7 * new_pos[1]
 
         done = False
 
         def print_values():
-            print('\n\nNEW')
+            print("\n\nNEW")
             for idx, val in reward.items():
-                print('{}: {}'.format(idx, val))
+                print("{}: {}".format(idx, val))
 
         # print_values()
 
@@ -80,29 +68,15 @@ class HalfCheetahEnv(mujoco_env.MujocoEnv, utils.EzPickle):
         return ob, sum(reward.values()), done, reward
 
     def _get_obs(self):
-        # take [pitch, joint positions] + derivative wrt time of [pitch, joint positions]
-        on_ground = 0
-        for i in range(self.sim.data.ncon):
-            contact = self.sim.data.contact[i]
-            c1 = self.sim.model.geom_id2name(contact.geom1)
-            c2 = self.sim.model.geom_id2name(contact.geom2)
-            if c2 == 'fradial' or c2 == 'bradial':
-                 on_ground = 1 
-
-        return np.concatenate([
-            np.array(self.sim.data.qpos.flat).take([1,2,3,4,5,6]),
-            np.array(self.sim.data.qvel.flat).take([1,2,3,4,5,6]),
-            np.array([on_ground])
-        ])
+        arr = np.concatenate([self.sim.data.qpos.flat, self.sim.data.qvel.flat])
+        return arr
 
     def reset_model(self):
         self.paction = 0
-        self.attr = {}
-        self.attr['prev_leg_v_f'] = 0
-        self.attr['prev_leg_v_b'] = 0
-        # self.attr['leg_cycle'] = 0
-        qpos = self.init_qpos + self.np_random.uniform(low=-.001, high=.001, size=self.model.nq)
-        qvel = self.init_qvel + self.np_random.randn(self.model.nv) * .001
+        qpos = self.init_qpos + self.np_random.uniform(
+            low=-0.01, high=0.01, size=self.model.nq
+        )
+        qvel = self.init_qvel + self.np_random.randn(self.model.nv) * 0.01
         self.paction = 0
         self.set_state(qpos, qvel)
         return self._get_obs()
