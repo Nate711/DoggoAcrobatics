@@ -1,8 +1,8 @@
 # DoggoAcrobatics
 
 ## Requirements
-0. Follow the OpenAI gym installation instructions for installing gym and mujoco-py. Make sure to copy your mujoco mjkey.txt file to the right location inside
-the mujocopy directory.
+0. Follow the OpenAI Spinning Up installation instructions: (https://spinningup.openai.com/en/latest/user/installation.html). Make sure to copy your mujoco mjkey.txt file to the right location inside
+the mujoco-py directory.
 
 1. Modify UpdateGymFiles.py so that ENVS_PATH is correctly set to your ```gym/envs/``` folder.
 
