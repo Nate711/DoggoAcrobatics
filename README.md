@@ -1,5 +1,4 @@
-# DoggoAcrobatics
-
+# Pupper RL
 ## Installation
 0. Follow the OpenAI Spinning Up installation instructions: (https://spinningup.openai.com/en/latest/user/installation.html). Make sure to copy your mujoco mjkey.txt file to the right location inside
 the mujoco-py directory.
